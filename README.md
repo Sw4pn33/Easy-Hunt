@@ -213,6 +213,12 @@ That's it! 🎉
 > | 🐧 Kali Linux | Chromium | ✅ Full support |
 > | 🐧 Arch / Fedora | Chrome / Chromium | ✅ Full support |
 
+### 🛑 How to Stop
+
+- **Stop a running search** → Click the red **"Stop"** button in the UI (partial results are saved)
+- **Close the browser** → Click **"Browser Ready"** button (it toggles to close)
+- **Shut down Easy-Hunt** → Press `Ctrl + C` in the terminal where it's running
+
 ---
 
 ## 📖 How It Works
