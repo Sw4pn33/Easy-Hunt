@@ -139,29 +139,60 @@ Use the Hall of Fame and Swag dork categories to find programs that acknowledge 
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 🪟 Windows
 
-- **Node.js 18+** — [Download here](https://nodejs.org/)
-- **Google Chrome** — Required for Puppeteer
-- **Gmail account** — For sending outreach emails (optional)
+**Prerequisites:** [Node.js 18+](https://nodejs.org/) • [Google Chrome](https://www.google.com/chrome/)
 
-### Installation
-
-```bash
-# Clone the repository
+```powershell
 git clone https://github.com/Sw4pn33/Easy-Hunt.git
 cd Easy-Hunt
-
-# Install dependencies
 npm install
-
-# Configure environment (optional — for SMTP email sending)
-cp .env.example .env
-# Edit .env with your Gmail credentials
-
-# Start the tool
+copy .env.example .env        # optional — edit for SMTP
 npm start
 ```
+
+---
+
+### 🐧 Linux / macOS
+
+**Prerequisites:** Node.js 18+ • Google Chrome or Chromium
+
+```bash
+# Install Node.js (if not installed)
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs google-chrome-stable    # Debian/Ubuntu
+# For macOS: brew install node && brew install --cask google-chrome
+
+git clone https://github.com/Sw4pn33/Easy-Hunt.git
+cd Easy-Hunt
+npm install
+cp .env.example .env           # optional — edit for SMTP
+npm start
+```
+
+---
+
+### 📱 Termux (Android)
+
+> **Note:** Termux uses Chromium in headless mode. The visible browser window won't open, but dorking and extraction still work. CAPTCHA solving requires manual workaround — use a pre-authenticated Google session or reduce dork volume to avoid CAPTCHAs.
+
+```bash
+pkg update && pkg upgrade
+pkg install nodejs git chromium
+npm config set puppeteer_skip_chromium_download true
+
+git clone https://github.com/Sw4pn33/Easy-Hunt.git
+cd Easy-Hunt
+npm install
+
+# Set Chromium path for Puppeteer
+export PUPPETEER_EXECUTABLE_PATH=$(which chromium-browser)
+
+cp .env.example .env           # optional — edit for SMTP
+npm start
+```
+
+---
 
 ### Open in Browser
 
@@ -170,6 +201,17 @@ http://localhost:4500
 ```
 
 That's it! 🎉
+
+> **Supported Platforms**
+>
+> | Platform | Browser | Status |
+> |----------|---------|--------|
+> | 🪟 Windows 10/11 | Chrome | ✅ Full support |
+> | 🐧 Ubuntu / Debian | Chrome / Chromium | ✅ Full support |
+> | 🍎 macOS | Chrome | ✅ Full support |
+> | 📱 Termux (Android) | Chromium (headless) | ⚠️ No visible browser |
+> | 🐧 Kali Linux | Chromium | ✅ Full support |
+> | 🐧 Arch / Fedora | Chrome / Chromium | ✅ Full support |
 
 ---
 
