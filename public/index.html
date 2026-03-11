@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Easy-Hunt — Bug Bounty Reconnaissance</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo"><i class="fas fa-crosshairs"></i></div>
+        <h1>Easy<span>-Hunt</span></h1>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" data-panel="search"><i class="fas fa-search"></i> Dork Search</button>
+        <button class="nav-btn" data-panel="results"><i class="fas fa-list"></i> Results <span id="resultsCount"
+            style="margin-left:4px;background:var(--accent);color:white;border-radius:10px;padding:0 6px;font-size:0.7rem;display:none">0</span></button>
+        <button class="nav-btn" data-panel="email"><i class="fas fa-envelope"></i> Email Sender</button>
+        <button class="nav-btn" data-panel="templates"><i class="fas fa-file-alt"></i> Templates</button>
+      </nav>
+    </header>
+
+    <main class="main">
+
+      <div class="panel active" id="panel-search">
+
+        <div class="card"
+          style="margin-bottom:1rem;border-color:var(--accent);background:linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05))">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem">
+            <div>
+              <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.25rem"><i class="fas fa-satellite-dish"
+                  style="color:var(--accent);margin-right:0.5rem"></i>Google Search Engine</div>
+              <div style="font-size:0.78rem" id="browserStatus"><i class="fas fa-circle"
+                  style="color:var(--red);font-size:0.5rem"></i> Not connected</div>
+            </div>
+            <div style="display:flex;gap:0.5rem;align-items:center">
+              <button class="btn btn-primary" id="btnBrowser" onclick="launchBrowserSession()"><i
+                  class="fas fa-globe"></i> Launch Browser</button>
+              <button class="btn btn-outline btn-sm" onclick="checkBrowserStatus()"><i class="fas fa-sync"></i></button>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--accent)" id="statSites">0</div>
+            <div class="stat-label">Sites Found</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--green)" id="statEmails">0</div>
+            <div class="stat-label">Emails Extracted</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--yellow)" id="statBounty">0</div>
+            <div class="stat-label">Bounty Programs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:var(--purple)" id="statHof">0</div>
+            <div class="stat-label">Hall of Fame</div>
+          </div>
+        </div>
+
+
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-layer-group" style="color:var(--accent)"></i> Select Dork
+              Categories <span
+                style="font-size:0.72rem;font-weight:400;color:var(--text-muted);margin-left:0.5rem">(<span
+                  id="totalDorkCount">0</span> total dorks)</span></div>
+            <div style="display:flex;gap:0.5rem">
+              <button class="btn btn-outline btn-sm" onclick="selectAllDorks()">Select All</button>
+              <button class="btn btn-outline btn-sm" onclick="clearAllDorks()">Clear</button>
+            </div>
+          </div>
+          <div class="dork-grid" id="dorkGrid"></div>
+        </div>
+
+
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-terminal" style="color:var(--cyan)"></i> Custom Dorks</div>
+          </div>
+          <textarea class="textarea" id="customDorks"
+            placeholder='Enter custom Google dorks (one per line)&#10;Example: inurl:"/security" "bounty" site:*.io&#10;Example: "responsible disclosure" "reward" -hackerone'
+            style="min-height:80px;font-family:monospace;font-size:0.8rem"></textarea>
+        </div>
+
+
+        <div class="card">
+          <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap">
+            <div style="flex:1;min-width:150px">
+              <label class="label">Max Results</label>
+              <select class="select" id="maxResults">
+                <option value="10">10 sites</option>
+                <option value="25">25 sites</option>
+                <option value="50" selected>50 sites</option>
+                <option value="100">100 sites</option>
+                <option value="200">200 sites</option>
+                <option value="300">300 sites</option>
+                <option value="500">500 sites</option>
+              </select>
+            </div>
+            <div style="min-width:160px">
+              <label class="label">Result Mode</label>
+              <div class="mode-toggle" id="modeToggle">
+                <button class="mode-btn active" data-mode="perDork" onclick="setResultMode('perDork')">Per Dork</button>
+                <button class="mode-btn" data-mode="total" onclick="setResultMode('total')">Total</button>
+              </div>
+              <div style="font-size:0.68rem;color:var(--text-muted);margin-top:0.3rem" id="modeHint">Each dork fetches
+                up to selected limit</div>
+            </div>
+            <div style="display:flex;gap:0.5rem">
+              <button class="btn btn-primary" id="btnSearch" onclick="startSearch()">
+                <i class="fas fa-rocket"></i> Start Hunt
+              </button>
+              <button class="btn btn-danger" id="btnStop" onclick="stopSearch()" style="display:none">
+                <i class="fas fa-stop"></i> Stop
+              </button>
+            </div>
+          </div>
+
+
+          <div id="progressSection" style="display:none;margin-top:1rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem">
+              <span class="animate-pulse" id="progressLabel"
+                style="font-size:0.82rem;font-weight:500">Searching...</span>
+              <span id="progressPercent" style="font-size:0.82rem;color:var(--text-muted)">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="fill" id="progressFill" style="width:0%"></div>
+            </div>
+            <div style="font-size:0.72rem;color:var(--text-muted)" id="progressDetail"></div>
+          </div>
+        </div>
+
+
+        <div class="card" id="liveResultsSection" style="display:none;margin-top:1rem">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-stream" style="color:var(--green)"></i> Live Results</div>
+            <span style="font-size:0.75rem;color:var(--text-muted)">Sites appear as they're found</span>
+          </div>
+          <div id="liveResultsContainer" style="max-height:400px;overflow-y:auto">
+            <table class="results-table">
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th>Type</th>
+                  <th>Security</th>
+                  <th>Emails</th>
+                  <th>sec.txt</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="liveResultsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="panel" id="panel-results">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-list" style="color:var(--green)"></i> Search Results</div>
+            <div style="display:flex;gap:0.5rem;align-items:center">
+              <input class="input" id="filterInput" placeholder="Filter results..."
+                style="width:200px;padding:0.4rem 0.7rem">
+              <select class="select" id="filterType" style="width:140px;padding:0.4rem" onchange="renderResults()">
+                <option value="all">All Types</option>
+                <option value="bounty">Bounty</option>
+                <option value="swag">Swag</option>
+                <option value="hof">Hall of Fame</option>
+                <option value="vdp">VDP</option>
+              </select>
+              <button class="btn btn-outline btn-sm" onclick="exportCSV()"><i class="fas fa-download"></i> CSV</button>
+              <button class="btn btn-success btn-sm" onclick="collectAllEmails()"><i class="fas fa-envelope"></i>
+                Collect All Emails</button>
+            </div>
+          </div>
+          <div style="max-height:calc(100vh - 250px);overflow-y:auto">
+            <table class="results-table" id="resultsTable">
+              <thead>
+                <tr>
+                  <th style="width:30px"><input type="checkbox" id="selectAllResults" onchange="toggleSelectAll(this)">
+                  </th>
+                  <th>Domain</th>
+                  <th>Type</th>
+                  <th>Security Page</th>
+                  <th>Security Emails</th>
+                  <th>security.txt</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+          <div id="noResults" style="display:none;text-align:center;padding:3rem;color:var(--text-muted)">
+            <i class="fas fa-search" style="font-size:2rem;margin-bottom:0.5rem;display:block"></i>
+            Run a dork search to find targets
+          </div>
+        </div>
+      </div>
+
+
+      <div class="panel" id="panel-email">
+        <div class="split-layout">
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-at" style="color:var(--cyan)"></i> Recipients</div>
+              <span style="font-size:0.75rem;color:var(--text-muted)" id="emailCount">0 emails</span>
+            </div>
+            <div class="email-list" id="emailList"></div>
+            <div style="margin-top:0.75rem;display:flex;gap:0.5rem">
+              <input class="input" id="addEmailInput" placeholder="Add email manually..." style="flex:1"
+                onkeydown="if(event.key==='Enter')addManualEmail()">
+              <button class="btn btn-outline btn-sm" onclick="addManualEmail()"><i class="fas fa-plus"></i></button>
+            </div>
+            <div style="margin-top:0.75rem;display:flex;gap:0.5rem">
+              <button class="btn btn-outline btn-sm" onclick="clearEmails()"><i class="fas fa-trash"></i> Clear
+                All</button>
+              <button class="btn btn-outline btn-sm" onclick="copyEmails()"><i class="fas fa-copy"></i> Copy
+                All</button>
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><i class="fas fa-pen" style="color:var(--yellow)"></i> Compose</div>
+              <select class="select" id="templateSelect" style="width:200px;padding:0.4rem" onchange="loadTemplate()">
+                <option value="">-- Select Template --</option>
+              </select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.75rem">
+              <div>
+                <label class="label">Send From (Gmail Account)</label>
+                <div style="display:flex;gap:0.5rem;align-items:center">
+                  <input class="input" id="fromEmail" list="savedEmails" placeholder="yourname@gmail.com"
+                    style="flex:1">
+                  <button class="btn btn-outline btn-sm" onclick="saveFromEmail()" title="Save this email"><i
+                      class="fas fa-save"></i></button>
+                </div>
+                <datalist id="savedEmails"></datalist>
+                <div style="font-size:0.68rem;color:var(--text-muted);margin-top:0.2rem">Select which Gmail account to
+                  send from</div>
+              </div>
+              <div>
+                <label class="label">Your Name</label>
+                <input class="input" id="senderName" placeholder="Your Name" value="Security Researcher">
+              </div>
+              <div>
+                <label class="label">Subject</label>
+                <input class="input" id="emailSubject" placeholder="Email subject...">
+              </div>
+              <div>
+                <label class="label">Message Body</label>
+                <textarea class="textarea" id="emailBody"
+                  placeholder="Write your vulnerability report or disclosure message..."
+                  style="min-height:250px"></textarea>
+              </div>
+              <div style="display:flex;gap:0.5rem;justify-content:flex-end;flex-wrap:wrap">
+                <button class="btn btn-outline" onclick="previewEmail()"><i class="fas fa-eye"></i> Preview</button>
+                <button class="btn btn-primary" id="btnSend" onclick="sendEmails()">
+                  <i class="fas fa-paper-plane"></i> Send via SMTP (<span id="sendCount">0</span>)
+                </button>
+                <button class="btn btn-success" onclick="openInGmail()">
+                  <i class="fab fa-google"></i> Open in Gmail (BCC)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card" id="sendProgress" style="display:none;margin-top:1rem">
+          <div class="card-title" style="margin-bottom:0.5rem"><i class="fas fa-spinner fa-spin"></i> Sending Emails...
+          </div>
+          <div class="progress-bar">
+            <div class="fill" id="sendProgressFill" style="width:0%"></div>
+          </div>
+          <div id="sendLog"
+            style="max-height:200px;overflow-y:auto;font-size:0.78rem;margin-top:0.5rem;font-family:monospace"></div>
+        </div>
+      </div>
+
+
+      <div class="panel" id="panel-templates">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><i class="fas fa-file-alt" style="color:var(--purple)"></i> Report Templates</div>
+          </div>
+          <div id="templatesList" style="display:flex;flex-direction:column;gap:1rem"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+
+  <div id="previewModal"
+    style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:2rem">
+    <div
+      style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;max-width:700px;width:100%;max-height:80vh;overflow-y:auto;padding:1.5rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h3 style="font-size:1rem">Email Preview</h3>
+        <button class="btn btn-outline btn-sm" onclick="closePreview()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="previewContent" style="font-size:0.85rem;line-height:1.7;color:var(--text-secondary)"></div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+
+</html>
