@@ -25,3 +25,8 @@ app.get('/{*path}', (req, res) => {
 app.listen(PORT, () => {
   console.log(`\n  Easy-Hunt running at http://localhost:${PORT}\n`);
 });
+
+process.on('SIGINT', () => {
+  console.log('\n  Shutting down...');
+  process.exit(0);
+});

@@ -217,10 +217,11 @@ That's it! 🎉
 
 - **Stop a running search** → Click the red **"Stop"** button in the UI (partial results are saved)
 - **Close the browser** → Click the green **"Browser Ready"** button (it toggles to close)
-- **Shut down Easy-Hunt** → Use any of these methods:
-  - Press `Ctrl + C` in the terminal (works even when logs are scrolling)
-  - Simply **close the terminal window** — this kills the server and browser
-  - On Linux/macOS: `kill $(lsof -t -i:4500)` to force-kill the port
+- **Shut down Easy-Hunt** → Press `Ctrl + C` in the terminal (auto-closes browser and exits cleanly), or simply **close the terminal window**
+- **Force-kill** (if it doesn't stop):
+  - 🪟 Windows: `taskkill /F /IM node.exe`
+  - 🐧 Linux/macOS: `kill $(lsof -t -i:4500)`
+  - 📱 Termux: `pkill -f node`
 
 ---
 
