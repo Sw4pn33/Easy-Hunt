@@ -216,8 +216,11 @@ That's it! 🎉
 ### 🛑 How to Stop
 
 - **Stop a running search** → Click the red **"Stop"** button in the UI (partial results are saved)
-- **Close the browser** → Click **"Browser Ready"** button (it toggles to close)
-- **Shut down Easy-Hunt** → Press `Ctrl + C` in the terminal where it's running
+- **Close the browser** → Click the green **"Browser Ready"** button (it toggles to close)
+- **Shut down Easy-Hunt** → Use any of these methods:
+  - Press `Ctrl + C` in the terminal (works even when logs are scrolling)
+  - Simply **close the terminal window** — this kills the server and browser
+  - On Linux/macOS: `kill $(lsof -t -i:4500)` to force-kill the port
 
 ---
 
