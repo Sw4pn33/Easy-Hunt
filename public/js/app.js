@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   await Promise.all([loadDorks(), loadEmailTemplates(), checkBrowserStatus()]);
   loadSavedEmails();
 
+  window.addEventListener('scroll', function () {
+    var btn = document.getElementById('scrollTopBtn');
+    if (btn) btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+  });
+
 
   var emailInput = document.getElementById('addEmailInput');
   if (emailInput) {
@@ -119,11 +124,13 @@ function renderDorkGrid() {
     const card = document.createElement('div');
     card.className = `dork-card ${selectedCategories.has(key) ? 'selected' : ''}`;
     card.onclick = () => toggleDork(key);
+    card.oncontextmenu = (e) => { e.preventDefault(); showDorkPreview(key); };
     card.innerHTML = `
       <div class="check">${selectedCategories.has(key) ? '<i class="fas fa-check"></i>' : ''}</div>
       <div class="icon" style="color:${cat.color}"><i class="fas ${cat.icon}"></i></div>
       <div class="name">${cat.label}</div>
-      <div class="count">${cat.dorks.length} dorks</div>`;
+      <div class="count">${cat.dorks.length} dorks</div>
+      <div class="preview-hint">Right-click to preview</div>`;
     grid.appendChild(card);
   }
   document.getElementById('totalDorkCount').textContent = totalDorks;
@@ -311,6 +318,8 @@ function renderResults() {
   const noResults = document.getElementById('noResults');
   const filter = document.getElementById('filterInput').value.toLowerCase();
   const typeFilter = document.getElementById('filterType').value;
+  const excludeInput = (document.getElementById('excludeDomainsInput').value || '').toLowerCase();
+  const excludeDomains = excludeInput ? excludeInput.split(',').map(d => d.trim()).filter(d => d) : [];
 
   let filtered = searchResults;
   if (filter) {
@@ -321,6 +330,9 @@ function renderResults() {
     );
   }
   if (typeFilter !== 'all') filtered = filtered.filter(r => r.programType === typeFilter);
+  if (excludeDomains.length > 0) {
+    filtered = filtered.filter(r => !excludeDomains.some(ex => r.domain && r.domain.toLowerCase().includes(ex)));
+  }
 
   if (filtered.length === 0) { tbody.innerHTML = ''; noResults.style.display = 'block'; return; }
   noResults.style.display = 'none';
@@ -455,7 +467,8 @@ function addManualEmail() {
 
 function removeEmail(email) { collectedEmails.delete(email); renderEmailList(); }
 function clearEmails() { collectedEmails.clear(); renderEmailList(); }
-function copyEmails() { navigator.clipboard.writeText(Array.from(collectedEmails).join('\n')); showToast('Copied!', 'success'); }
+function copyEmails() { navigator.clipboard.writeText(Array.from(collectedEmails).join('\n')); showToast('Copied (newline-separated)!', 'success'); }
+function copyEmailsComma() { navigator.clipboard.writeText(Array.from(collectedEmails).join(', ')); showToast('Copied (comma-separated)!', 'success'); }
 function updateSendCount() { document.getElementById('sendCount').textContent = collectedEmails.size; }
 
 
@@ -616,3 +629,17 @@ function showToast(msg, type) {
 
 var modal = document.getElementById('previewModal');
 if (modal) modal.addEventListener('click', function (e) { if (e.target.id === 'previewModal') closePreview(); });
+
+function showDorkPreview(key) {
+  var cat = dorkTemplates[key];
+  if (!cat) return;
+  document.getElementById('dorkPreviewTitle').innerHTML = '<i class="fas ' + cat.icon + '" style="color:' + cat.color + ';margin-right:0.5rem"></i>' + cat.label + ' (' + cat.dorks.length + ' dorks)';
+  document.getElementById('dorkPreviewList').innerHTML = cat.dorks.map(function (d, i) {
+    return '<div class="dork-preview-item"><span class="dork-num">' + (i + 1) + '</span><code>' + d.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code></div>';
+  }).join('');
+  document.getElementById('dorkPreviewModal').style.display = 'flex';
+}
+
+function closeDorkPreview() {
+  document.getElementById('dorkPreviewModal').style.display = 'none';
+}

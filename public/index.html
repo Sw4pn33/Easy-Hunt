@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Easy-Hunt — Bug Bounty Reconnaissance</title>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='none' stroke='%236366f1' stroke-width='6'/><circle cx='50' cy='50' r='25' fill='none' stroke='%236366f1' stroke-width='4'/><circle cx='50' cy='50' r='5' fill='%236366f1'/><line x1='50' y1='0' x2='50' y2='20' stroke='%236366f1' stroke-width='4'/><line x1='50' y1='80' x2='50' y2='100' stroke='%236366f1' stroke-width='4'/><line x1='0' y1='50' x2='20' y2='50' stroke='%236366f1' stroke-width='4'/><line x1='80' y1='50' x2='100' y2='50' stroke='%236366f1' stroke-width='4'/></svg>">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -169,9 +171,11 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title"><i class="fas fa-list" style="color:var(--green)"></i> Search Results</div>
-            <div style="display:flex;gap:0.5rem;align-items:center">
+            <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
               <input class="input" id="filterInput" placeholder="Filter results..."
                 style="width:200px;padding:0.4rem 0.7rem">
+              <input class="input" id="excludeDomainsInput" placeholder="Exclude domains (comma-separated)..."
+                style="width:240px;padding:0.4rem 0.7rem" oninput="renderResults()">
               <select class="select" id="filterType" style="width:140px;padding:0.4rem" onchange="renderResults()">
                 <option value="all">All Types</option>
                 <option value="bounty">Bounty</option>
@@ -223,11 +227,13 @@
                 onkeydown="if(event.key==='Enter')addManualEmail()">
               <button class="btn btn-outline btn-sm" onclick="addManualEmail()"><i class="fas fa-plus"></i></button>
             </div>
-            <div style="margin-top:0.75rem;display:flex;gap:0.5rem">
+            <div style="margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="clearEmails()"><i class="fas fa-trash"></i> Clear
                 All</button>
               <button class="btn btn-outline btn-sm" onclick="copyEmails()"><i class="fas fa-copy"></i> Copy
-                All</button>
+                (newline)</button>
+              <button class="btn btn-outline btn-sm" onclick="copyEmailsComma()"><i class="fas fa-copy"></i> Copy
+                (comma)</button>
             </div>
           </div>
 
@@ -317,6 +323,22 @@
       <div id="previewContent" style="font-size:0.85rem;line-height:1.7;color:var(--text-secondary)"></div>
     </div>
   </div>
+
+  <div id="dorkPreviewModal" class="dork-preview-overlay" style="display:none"
+    onclick="if(event.target===this)closeDorkPreview()">
+    <div class="dork-preview-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h3 id="dorkPreviewTitle" style="font-size:1rem"></h3>
+        <button class="btn btn-outline btn-sm" onclick="closeDorkPreview()"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="dorkPreviewList" class="dork-preview-list"></div>
+    </div>
+  </div>
+
+  <button id="scrollTopBtn" class="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+    style="display:none">
+    <i class="fas fa-chevron-up"></i>
+  </button>
 
   <script src="/js/app.js"></script>
 </body>

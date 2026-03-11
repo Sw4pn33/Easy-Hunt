@@ -378,6 +378,8 @@ Contributions are welcome! Here's how:
 
 ## ⚠️ Disclaimer
 
+> **Important:** Easy-Hunt is a **script-based automation tool**, not an AI-powered system. It performs Google dorking, page scraping, and pattern matching using predefined rules and heuristics. **It does not guarantee 100% accuracy.** Results may include false positives, miss valid programs, or extract incorrect contact information. **Always perform manual verification** before sending any vulnerability reports or outreach emails. Review each result, confirm the security contact is correct, and ensure the organization has an active disclosure program before reaching out.
+
 This tool is intended for **authorized security research** and **responsible disclosure** only. Users are responsible for ensuring they comply with:
 
 - Google's Terms of Service
