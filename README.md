@@ -1,423 +1,199 @@
 <div align="center">
 
-# 🎯 Easy-Hunt
+# Easy-Hunt
 
-### Smart Bug Bounty Reconnaissance & Outreach Tool
+**Smart Bug Bounty Reconnaissance & Outreach Tool**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![Puppeteer](https://img.shields.io/badge/Puppeteer-24.x-40B5A4?logo=puppeteer&logoColor=white)](https://pptr.dev/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](#docker)
 
-<br>
+Automate Google dorking, extract security contacts, send bulk reports — all in one tool.
 
-**Stop wasting hours finding bug bounty targets manually.**
-Easy-Hunt automates the entire recon → extract → outreach pipeline.
-
-Find programs → Extract security contacts → Send reports → Track responses → Hunt smarter.
-
-<br>
-
-[🚀 Quick Start](#-quick-start) · [📖 How It Works](#-how-it-works) · [🎯 Use Cases](#-use-cases) · [⚙️ Configuration](#%EF%B8%8F-configuration)
+[Quick Start](#quick-start) · [Docker](#docker) · [VPS Deploy](#vps-deployment) · [Configuration](#configuration)
 
 </div>
 
 ---
 
-## 💡 The Problem
-
-You spend **hours** doing Google dorking to find bug bounty programs, then **more hours** manually visiting each site to find their security contact, then **even more time** sending individual vulnerability reports — only for most companies to **never respond**.
-
-**Easy-Hunt solves this entire workflow:**
+## What It Does
 
 ```
-🔍 Dorking → 📧 Extraction → ✉️ Outreach → 📊 Track Responses
-   (auto)      (auto)          (one-click)     (smart filter)
+Google Dorking → Security Contact Extraction → Bulk Email Outreach
+   (200+ dorks)     (security.txt, emails)       (Gmail BCC / SMTP)
 ```
 
-## 🎯 Use Cases
-
-### 🏹 Pre-Hunt Reconnaissance
-> *"Which companies actually respond to security reports?"*
-
-Send a **mock/initial disclosure inquiry** to hundreds of extracted security contacts at once. Companies that reply quickly are more likely to have active programs — focus your hunting there. **Save days of wasted effort.**
-
-### 📬 Bulk Vulnerability Reporting
-> *"I found the same vulnerability pattern across 50 sites"*
-
-Extract all security emails → Load a report template → Send to all at once via Gmail BCC or SMTP. No more copy-pasting emails one by one.
-
-### 🗺️ Target Discovery
-> *"I want to find programs that aren't on HackerOne/Bugcrowd"*
-
-Easy-Hunt finds **self-hosted** bug bounty and VDP programs through Google dorking — the ones that don't appear on major platforms. Less competition, more unique targets.
-
-### 🏆 Hall of Fame Hunting
-> *"I want easy wins for my security researcher portfolio"*
-
-Use the Hall of Fame and Swag dork categories to find programs that acknowledge researchers. Submit valid reports → Get listed → Build your reputation.
+- **200+ Google dorks** across 15 categories (bug bounty, VDP, gov, edu, fintech, etc.)
+- **Smart extraction** — visits exact URLs, detects `security.txt`, extracts emails with junk filtering
+- **Bulk outreach** — Gmail BCC or SMTP with built-in report templates
+- **CSV export**, confidence scoring, real-time progress, stop/resume support
 
 ---
 
-## ✨ Features
+## Quick Start
 
-<table>
-<tr>
-<td width="50%">
-
-### 🔍 Smart Google Dorking
-- **200+ built-in dorks** across 15 categories
-- Per-dork or total result modes
-- Custom dork input support
-- Persistent pagination (up to 50 pages/dork)
-- Human-like search behavior
-- CAPTCHA detection & manual solve support
-
-</td>
-<td width="50%">
-
-### 📧 Intelligent Extraction
-- Visits **exact Google URL** first (not just domain)
-- `security.txt` auto-detection
-- Email extraction with junk/fake filtering
-- Program type detection (Bounty/Swag/HoF/VDP)
-- Confidence scoring for accuracy
-- Visible browser for Cloudflare CAPTCHA solving
-
-</td>
-</tr>
-<tr>
-<td>
-
-### ✉️ Bulk Email Outreach
-- **One-click Gmail BCC** — opens compose with all emails
-- SMTP direct sending with delay
-- 3 built-in report templates
-- Paste bulk email lists (auto-parsed)
-- Junk email auto-filtering
-- Gmail account selector
-
-</td>
-<td>
-
-### 📊 Results & Export
-- Live results during search
-- Filter by program type
-- CSV export
-- Stop/resume with partial results saved
-- Session-based result management
-- Real-time progress tracking
-
-</td>
-</tr>
-</table>
-
----
-
-## 🖥️ Screenshots
-
-<div align="center">
-
-### Dork Search Panel
-> Select from 15 categories with 200+ dorks, set per-dork limits, launch the browser, and start hunting.
-
-<img src="screenshots/dork-search.png" alt="Dork Search Panel" width="800">
-
-### Live Results
-> Watch results stream in real-time as each dork is processed. See domain, type, security page, and emails instantly.
-
-<img src="screenshots/live-results.png" alt="Live Results" width="800">
-
-### Email Sender
-> Paste or collect emails → Choose template → Open in Gmail with BCC or send via SMTP. Track who responds.
-
-<img src="screenshots/email-sender.png" alt="Email Sender" width="800">
-
-</div>
-
----
-
-## 🚀 Quick Start
-
-### 🪟 Windows
-
-**Prerequisites:** [Node.js 18+](https://nodejs.org/) • [Google Chrome](https://www.google.com/chrome/)
-
-```powershell
+```bash
 git clone https://github.com/Sw4pn33/Easy-Hunt.git
 cd Easy-Hunt
 npm install
-copy .env.example .env        # optional — edit for SMTP
+cp .env.example .env    # optional — edit for SMTP
 npm start
 ```
 
+Open `http://localhost:4500`
+
+**Requirements:** Node.js 18+ and Google Chrome/Chromium
+
 ---
 
-### 🐧 Linux / macOS
-
-**Prerequisites:** Node.js 18+ • Google Chrome or Chromium
+## Docker
 
 ```bash
-# Install Node.js (if not installed)
+# Build
+docker build -t easy-hunt .
+
+# Run
+docker run -d -p 4500:4500 --name easy-hunt easy-hunt
+
+# With SMTP config
+docker run -d -p 4500:4500 \
+  -e SMTP_HOST=smtp.gmail.com \
+  -e SMTP_PORT=587 \
+  -e SMTP_USER=you@gmail.com \
+  -e SMTP_PASS=your_app_password \
+  -e SMTP_FROM=you@gmail.com \
+  easy-hunt
+```
+
+Open `http://localhost:4500`
+
+> **Note:** Docker runs in headless mode (no visible browser window). Dorking and extraction work fully, but you can't manually solve CAPTCHAs. For CAPTCHA support, use the native install.
+
+---
+
+## VPS Deployment
+
+Works on any Ubuntu/Debian VPS (1GB+ RAM recommended).
+
+### Option 1: Docker (Recommended)
+
+```bash
+# Install Docker
+curl -fsSL https://get.docker.com | sh
+
+# Clone and run
+git clone https://github.com/Sw4pn33/Easy-Hunt.git
+cd Easy-Hunt
+docker build -t easy-hunt .
+docker run -d -p 4500:4500 --restart unless-stopped --name easy-hunt easy-hunt
+```
+
+### Option 2: Native
+
+```bash
+# Install Node.js + Chromium
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs google-chrome-stable    # Debian/Ubuntu
-# For macOS: brew install node && brew install --cask google-chrome
+sudo apt install -y nodejs chromium-browser
 
+# Clone and run
 git clone https://github.com/Sw4pn33/Easy-Hunt.git
 cd Easy-Hunt
 npm install
-cp .env.example .env           # optional — edit for SMTP
-npm start
-```
-
----
-
-### 📱 Termux (Android)
-
-> **Note:** Termux uses Chromium in headless mode. The visible browser window won't open, but dorking and extraction still work. CAPTCHA solving requires manual workaround — use a pre-authenticated Google session or reduce dork volume to avoid CAPTCHAs.
-
-```bash
-pkg update && pkg upgrade
-pkg install nodejs git chromium
-npm config set puppeteer_skip_chromium_download true
-
-git clone https://github.com/Sw4pn33/Easy-Hunt.git
-cd Easy-Hunt
-npm install
-
-# Set Chromium path for Puppeteer
+export HEADLESS=true
 export PUPPETEER_EXECUTABLE_PATH=$(which chromium-browser)
 
-cp .env.example .env           # optional — edit for SMTP
-npm start
+# Run with PM2 (persistent)
+npm i -g pm2
+pm2 start server.js --name easy-hunt
+pm2 save && pm2 startup
 ```
 
----
+### Access Remotely
 
-### Open in Browser
+```bash
+# Direct access (replace with your VPS IP)
+http://YOUR_VPS_IP:4500
 
+# Or use Nginx reverse proxy
+sudo apt install nginx
 ```
-http://localhost:4500
+
+<details>
+<summary>Nginx config (optional — for domain/SSL)</summary>
+
+```nginx
+server {
+    listen 80;
+    server_name hunt.yourdomain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:4500;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
 ```
 
-That's it! 🎉
+Then: `sudo certbot --nginx -d hunt.yourdomain.com` for SSL.
 
-> **Supported Platforms**
->
-> | Platform | Browser | Status |
-> |----------|---------|--------|
-> | 🪟 Windows 10/11 | Chrome | ✅ Full support |
-> | 🐧 Ubuntu / Debian | Chrome / Chromium | ✅ Full support |
-> | 🍎 macOS | Chrome | ✅ Full support |
-> | 📱 Termux (Android) | Chromium (headless) | ⚠️ No visible browser |
-> | 🐧 Kali Linux | Chromium | ✅ Full support |
-> | 🐧 Arch / Fedora | Chrome / Chromium | ✅ Full support |
-
-### 🛑 How to Stop
-
-- **Stop a running search** → Click the red **"Stop"** button in the UI (partial results are saved)
-- **Close the browser** → Click the green **"Browser Ready"** button (it toggles to close)
-- **Shut down Easy-Hunt** → Press `Ctrl + C` in the terminal (auto-closes browser and exits cleanly), or simply **close the terminal window**
-- **Force-kill** (if it doesn't stop):
-  - 🪟 Windows: `taskkill /F /IM node.exe`
-  - 🐧 Linux/macOS: `kill $(lsof -t -i:4500)`
-  - 📱 Termux: `pkill -f node`
+</details>
 
 ---
 
-## 📖 How It Works
+## Configuration
 
-### Step 1: Launch Browser 🌐
-Click **"Launch Browser"** — a Chrome window opens and navigates to Google. If a CAPTCHA appears, solve it once manually. After that, everything is automated.
-
-### Step 2: Select Dorks & Search 🔍
-Pick dork categories (Bug Bounty, Responsible Disclosure, security.txt, etc.) or enter custom dorks. Set how many results you want per dork. Hit **"Start Hunt"**.
-
-### Step 3: Watch Live Results 📊
-Results stream in real-time. Easy-Hunt:
-1. Types each dork into Google (human-like)
-2. Extracts all unique domains from results
-3. Paginates through up to 50 pages per dork
-4. Deduplicates across all dorks
-
-### Step 4: Automatic Extraction 🔬
-For each found domain, Easy-Hunt:
-1. **Visits the exact URL** Google found (already the disclosure page)
-2. Checks `security.txt` for contact info
-3. Falls back to common security paths (`/security`, `/bug-bounty`, etc.)
-4. Extracts emails, forms, program type, and scope
-5. Assigns a confidence score
-
-### Step 5: Send Outreach ✉️
-Click **"Collect All Emails"** → Switch to Email Sender tab → Choose a template or write your own → Click **"Open in Gmail (BCC)"** to send from your Gmail with Mailsuite tracking, or use SMTP for direct sending.
-
----
-
-## 🗂️ Dork Categories
-
-| Category | Dorks | Description |
-|----------|-------|-------------|
-| 🐛 Bug Bounty Programs | 30 | Programs offering monetary rewards |
-| 🛡️ Responsible Disclosure | 24 | VDP policies and reporting pages |
-| 📄 security.txt Files | 18 | RFC 9116 security contact files |
-| 🎁 Swag Programs | 12 | Programs offering merchandise/swag |
-| 🏆 Hall of Fame | 12 | Programs that acknowledge researchers |
-| 🖥️ Platform-Powered | 13 | Bugcrowd/HackerOne powered programs |
-| 🏛️ Government & Military | 12 | .gov and .mil programs |
-| 🎓 University & Education | 9 | .edu security programs |
-| 🇪🇺 Europe | 19 | European country-specific programs |
-| 🌏 Asia & Pacific | 6 | APAC region programs |
-| 🌎 Americas | 4 | North/South America programs |
-| 💰 Fintech & Crypto | 13 | Financial and blockchain programs |
-| 🛒 E-commerce & Payments | 4 | Shopping and payment platforms |
-| 💻 CMS & Open Source | 11 | Open source project programs |
-| 🔬 Advanced & Unique | 12 | Uncommon and creative dorks |
-| 📡 Wide Scan | 11 | High-volume broad searches |
-
-**Total: 200+ unique Google dorks**
-
----
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
+Create `.env` in root (optional — only needed for SMTP):
 
 ```env
-# Server port (default: 4500)
 PORT=4500
-
-# SMTP Configuration (for direct email sending)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
+SMTP_PASS=your_app_password        # Google App Password, not account password
 SMTP_FROM=your_email@gmail.com
+HEADLESS=false                     # Set true for VPS/Docker (no GUI)
 ```
 
-### Gmail App Password Setup
-
-1. Go to [Google Account Security](https://myaccount.google.com/security)
-2. Enable **2-Step Verification** (required)
-3. Go to **App passwords** (search "App passwords" in account settings)
-4. Generate a new app password for **"Mail"**
-5. Copy the 16-character password to `SMTP_PASS` in `.env`
-
-> **Note:** SMTP is optional. You can use the **"Open in Gmail (BCC)"** button instead, which opens your Gmail directly in the browser — no SMTP needed.
+> **Gmail App Password:** Google Account → Security → 2-Step Verification → App Passwords → Generate for "Mail"
 
 ---
 
-## 📁 Project Structure
+## Platform Support
 
-```
-Easy-Hunt/
-├── server.js              # Express server entry point
-├── package.json           # Dependencies and scripts
-├── .env                   # Environment configuration
-├── public/
-│   ├── index.html         # Main UI
-│   ├── css/
-│   │   └── style.css      # Dark theme styles
-│   └── js/
-│       └── app.js         # Frontend logic
-└── src/
-    ├── dorks.js           # 200+ Google dork templates
-    ├── routes/
-    │   ├── search.js      # Search API endpoints
-    │   └── email.js       # Email sending endpoints
-    └── utils/
-        ├── searchEngine.js  # Puppeteer Google search engine
-        └── extractor.js     # Security info extraction pipeline
-```
+| Platform | Browser Mode | CAPTCHA |
+|----------|-------------|---------|
+| Windows / macOS / Linux (Desktop) | Visible | Manual solve |
+| Docker / VPS | Headless | Not supported |
+| Termux (Android) | Headless | Not supported |
 
 ---
 
-## 🔧 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/search/dorks` | Get all dork templates |
-| `POST` | `/api/search/launch-browser` | Launch Puppeteer browser |
-| `GET` | `/api/search/browser-status` | Check browser readiness |
-| `POST` | `/api/search/close-browser` | Close browser |
-| `POST` | `/api/search/start` | Start a dork search |
-| `GET` | `/api/search/progress/:id` | Get search progress & results |
-| `POST` | `/api/search/stop/:id` | Stop search (saves partial results) |
-| `GET` | `/api/search/export/:id` | Export results as CSV |
-| `POST` | `/api/email/send` | Send bulk emails via SMTP |
+| `POST` | `/api/search/launch-browser` | Launch browser |
+| `POST` | `/api/search/start` | Start dork search |
+| `GET` | `/api/search/progress/:id` | Get search progress |
+| `POST` | `/api/search/stop/:id` | Stop search |
+| `GET` | `/api/search/export/:id` | Export CSV |
+| `POST` | `/api/email/send` | Send bulk emails |
 | `GET` | `/api/email/templates` | Get email templates |
 
 ---
 
-## 🛡️ Smart Email Filtering
+## Disclaimer
 
-Easy-Hunt automatically filters out junk and fake emails:
-
-- ❌ Placeholder emails (`example.com`, `test.com`, `domain.com`)
-- ❌ System emails (`noreply`, `no-reply`, `donotreply`)
-- ❌ Invalid TLDs (random strings like `.avp`, `.xvz`)
-- ❌ Keyboard mashing domains (5+ consecutive consonants)
-- ❌ Asset emails (`.png`, `.jpg`, `.css`, `.js` extensions)
-- ❌ Unicode-escaped prefixes (`u003e` cleanup)
-- ✅ Validates against 150+ known TLDs
-- ✅ Deduplicates across all sources
+This tool is for **authorized security research** and **responsible disclosure** only. It performs Google dorking and pattern matching — **not AI-powered**, no guarantee of accuracy. Always verify results manually before sending reports. Users must comply with Google's ToS, applicable laws, and each organization's disclosure policy.
 
 ---
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Here's how:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Ideas for Contribution
-- [ ] Add more dork templates for specific industries
-- [ ] Bing/DuckDuckGo search engine support
-- [ ] Result persistence with SQLite
-- [ ] Email open tracking (tracking pixel)
-- [ ] Scheduled/recurring searches
-- [ ] Browser extension for quick dork searches
-- [ ] Dark/light theme toggle
-
----
-
-## ⚠️ Disclaimer
-
-> **Important:** Easy-Hunt is a **script-based automation tool**, not an AI-powered system. It performs Google dorking, page scraping, and pattern matching using predefined rules and heuristics. **It does not guarantee 100% accuracy.** Results may include false positives, miss valid programs, or extract incorrect contact information. **Always perform manual verification** before sending any vulnerability reports or outreach emails. Review each result, confirm the security contact is correct, and ensure the organization has an active disclosure program before reaching out.
-
-This tool is intended for **authorized security research** and **responsible disclosure** only. Users are responsible for ensuring they comply with:
-
-- Google's Terms of Service
-- Applicable computer fraud and abuse laws
-- Each organization's vulnerability disclosure policy
-- CAN-SPAM Act (for email outreach)
-
-**Do not** use this tool for:
-- Unauthorized access to systems
-- Spamming or unsolicited bulk email
-- Any illegal activities
-
-The author is not responsible for misuse of this tool.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
----
+MIT — see [LICENSE](LICENSE)
 
 <div align="center">
 
-**Made with ❤️ for the bug bounty community**
-
-⭐ Star this repo if you find it useful!
-
-[Report Bug](https://github.com/Sw4pn33/Easy-Hunt/issues) · [Request Feature](https://github.com/Sw4pn33/Easy-Hunt/issues)
+**[Report Bug](https://github.com/Sw4pn33/Easy-Hunt/issues) · [Request Feature](https://github.com/Sw4pn33/Easy-Hunt/issues)**
 
 </div>

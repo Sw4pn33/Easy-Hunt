@@ -42,14 +42,17 @@ async function launchBrowser() {
     try { await browser.close(); } catch (e) {}
   }
 
+  const isHeadless = process.env.HEADLESS === 'true' || process.env.DOCKER === 'true';
   browser = await puppeteer.launch({
-    headless: false,
+    headless: isHeadless,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
     defaultViewport: { width: 1280, height: 900 },
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       '--window-size=1280,900',
+      '--disable-dev-shm-usage',
     ],
   });
 
