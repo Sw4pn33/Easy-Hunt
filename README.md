@@ -78,20 +78,20 @@ Find programs → Extract security contacts → Send reports → Track responses
 
 <div align="center">
 
-### Dork Search Panel
-> Select from 15 categories with 200+ dorks, set per-dork limits, launch the browser, and start hunting.
+### Dashboard with Active Hunting Programs
+> Find programs, extract contacts, and see which ones are worth your time.
 
-<img src="screenshots/dork-search.png" alt="Dork Search Panel" width="800">
+<img src="screenshots/Dashboard%20With%20Active%20Huntng%20Programs.png" alt="Dashboard" width="800">
 
 ### Live Results
 > Watch results stream in real-time as each dork is processed. See domain, type, security page, and emails instantly.
 
 <img src="screenshots/live-results.png" alt="Live Results" width="800">
 
-### Email Sender
-> Paste or collect emails → Choose template → Open in Gmail with BCC or send via SMTP.
+### Email Sender Dashboard
+> Bulk email outreach with templates — Gmail BCC or SMTP, track who responds.
 
-<img src="screenshots/email-sender.png" alt="Email Sender" width="800">
+<img src="screenshots/email-sender-dashbaord.png" alt="Email Sender Dashboard" width="800">
 
 </div>
 
